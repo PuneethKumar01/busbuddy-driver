@@ -22,9 +22,14 @@ export default function AddRouteScreen({ navigation }: Props) {
       });
       Alert.alert("Success", "Route created!");
       navigation.replace("AddBus", { routeId: res.data._id });
-    } catch (err: any) {
-      Alert.alert("Error", err.message);
-    }
+    }  catch (err: any) {
+  console.log("Route error:", err.response?.data || err.message);
+  Alert.alert(
+    "Error",
+    err.response?.data?.error || err.message
+  );
+}
+
   };
 
   return (

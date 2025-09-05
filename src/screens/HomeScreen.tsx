@@ -12,12 +12,23 @@ export default function HomeScreen({ route }: any) {
     const fetchData = async () => {
       try {
         const busRes = await api.get(`/bus/${busId}`);
-        setBus(busRes.data);
+setBus(busRes.data);
+setBusRoute(busRes.data.route); // route is already populated
 
-        const routeRes = await api.get(`/route/${busRes.data.route}`);
-        setBusRoute(routeRes.data);
       } catch (err: any) {
         Alert.alert("Error", err.message);
+        console.log('yash')
+        console.log(err);
+         if (err.response) {
+    console.log("Status:", err.response.status);      // e.g. 404
+    console.log("Data:", err.response.data);          // backend error message
+    console.log("Headers:", err.response.headers);    // optional
+  } else if (err.request) {
+    console.log("No response received:", err.request);
+  } else {
+    console.log("Error message:", err.message);
+  }
+
       }
     };
     fetchData();

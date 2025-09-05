@@ -12,18 +12,37 @@ export default function AddBusScreen({ route, navigation }: Props) {
   const [capacity, setCapacity] = useState("");
 
   const handleSaveBus = async () => {
-    try {
-      const res = await api.post("/bus/add", {
-        busNumber,
-        capacity: Number(capacity),
-        route: routeId,
-      });
-      Alert.alert("Success", "Bus registered!");
-      navigation.replace("Home", { busId: res.data._id });
-    } catch (err: any) {
-      Alert.alert("Error", err.message);
-    }
-  };
+  // 1️⃣ Validate inputs before sending
+  if (!busNumber.trim()) return Alert.alert("Error", "Bus Number is required");
+  if (!capacity.trim() || isNaN(Number(capacity))) return Alert.alert("Error", "Capacity must be a valid number");
+  if (!routeId) return Alert.alert("Error", "Route ID is missing");
+
+  try {
+    // 2️⃣ Send POST request
+    const res = await api.post("/bus/add", {
+      busNumber,
+      capacity: Number(capacity),
+      route: routeId,
+    });
+
+    // ✅ Only navigate if successful
+    Alert.alert("Success", "Bus registered!");
+    navigation.replace("Home", { busId: res.data._id });
+
+  } catch (err: any) {
+    // 3️⃣ Show proper error from backend
+    console.log("Add bus error:", err.response?.data || err.message);
+
+    Alert.alert(
+      "Error",
+      err.response?.data?.error || err.message || "Something went wrong"
+    );
+
+    // ❌ Do NOT navigate
+  }
+};
+
+
 
   return (
     <View style={styles.container}>
